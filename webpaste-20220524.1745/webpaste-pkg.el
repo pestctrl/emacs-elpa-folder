@@ -1,0 +1,2 @@
+;;; Generated package description from webpaste.el  -*- no-byte-compile: t -*-
+(define-package "webpaste" "20220524.1745" "Paste to pastebin-like services" '((emacs "24.4") (request "0.2.0") (cl-lib "0.5")) :commit "d96da58fe42988d5c433c71ee9f8e6fb75d595a9" :authors '(("Elis \"etu\" Hirwing" . "elis@hirwing.se")) :maintainer '("Elis \"etu\" Hirwing" . "elis@hirwing.se") :keywords '("convenience" "comm" "paste") :url "https://github.com/etu/webpaste.el")

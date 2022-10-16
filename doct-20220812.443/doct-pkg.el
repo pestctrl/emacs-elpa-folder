@@ -1,0 +1,2 @@
+;;; Generated package description from doct.el  -*- no-byte-compile: t -*-
+(define-package "doct" "20220812.443" "DOCT: Declarative Org capture templates" '((emacs "25.1")) :commit "506c22f365b75f5423810c4933856802554df464" :authors '(("Nicholas Vollmer" . "progfolio@protonmail.com")) :maintainer '("Nicholas Vollmer" . "progfolio@protonmail.com") :keywords '("org" "convenience") :url "https://github.com/progfolio/doct")
