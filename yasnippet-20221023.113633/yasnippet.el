@@ -6,8 +6,6 @@
 ;;          Noam Postavsky <npostavs@gmail.com>
 ;; Maintainer: Noam Postavsky <npostavs@gmail.com>
 ;; Version: 0.14.0
-;; Package-Version: 20200604.246
-;; Package-Commit: 5cbdbf0d2015540c59ed8ee0fcf4788effdf75b6
 ;; X-URL: http://github.com/joaotavora/yasnippet
 ;; Keywords: convenience, emulation
 ;; URL: http://github.com/joaotavora/yasnippet
@@ -4170,30 +4168,31 @@ Returns the newly created snippet."
       (yas--letenv expand-env
         ;; Put a single undo action for the expanded snippet's
         ;; content.
-        (let ((buffer-undo-list t))
-          (goto-char begin)
-          ;; Call before and after change functions manually,
-          ;; otherwise cc-mode's cache can get messed up.  Don't use
-          ;; `inhibit-modification-hooks' for that, that blocks
-          ;; overlay and text property hooks as well!  FIXME: Maybe
-          ;; use `combine-change-calls'?  (Requires Emacs 27+ though.)
-          (run-hook-with-args 'before-change-functions begin end)
-          (let ((before-change-functions nil)
-                (after-change-functions nil))
-            ;; Some versions of cc-mode (might be the one with Emacs
-            ;; 24.3 only) fail when inserting snippet content in a
-            ;; narrowed buffer, so make sure to insert before
-            ;; narrowing.
-            (insert content)
-            (narrow-to-region begin (point))
-            (goto-char (point-min))
-            (yas--snippet-parse-create snippet))
-          (run-hook-with-args 'after-change-functions
-                              (point-min) (point-max)
-                              (- end begin)))
-        (when (listp buffer-undo-list)
-          (push (cons (point-min) (point-max))
-                buffer-undo-list))
+        (unwind-protect
+            (let ((buffer-undo-list t))
+              (goto-char begin)
+              ;; Call before and after change functions manually,
+              ;; otherwise cc-mode's cache can get messed up.  Don't use
+              ;; `inhibit-modification-hooks' for that, that blocks
+              ;; overlay and text property hooks as well!  FIXME: Maybe
+              ;; use `combine-change-calls'?  (Requires Emacs 27+ though.)
+              (run-hook-with-args 'before-change-functions begin end)
+              (let ((before-change-functions nil)
+                    (after-change-functions nil))
+                ;; Some versions of cc-mode (might be the one with Emacs
+                ;; 24.3 only) fail when inserting snippet content in a
+                ;; narrowed buffer, so make sure to insert before
+                ;; narrowing.
+                (insert content)
+                (narrow-to-region begin (point))
+                (goto-char (point-min))
+                (yas--snippet-parse-create snippet))
+              (run-hook-with-args 'after-change-functions
+                                  (point-min) (point-max)
+                                  (- end begin)))
+          (when (listp buffer-undo-list)
+            (push (cons (point-min) (point-max))
+                  buffer-undo-list)))
 
         ;; Indent, collecting undo information normally.
         (yas--indent snippet)
