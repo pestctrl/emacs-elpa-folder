@@ -2,3 +2,11 @@
 *.elc
 *.signed
 archive-contents
+
+*.gpg
+emacsql-sqlite
+*~
+*.timestamp
+
+vterm-*/build
+*.so
