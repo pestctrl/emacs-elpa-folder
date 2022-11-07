@@ -1,4 +1,4 @@
-(define-package "exwm" "20221012.34711" "Emacs X Window Manager"
+(define-package "exwm" "20221023.195927" "Emacs X Window Manager"
   '((xelb "0.18"))
   :authors
   '(("Chris Feng" . "chris.w.feng@gmail.com"))

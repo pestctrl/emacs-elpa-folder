@@ -72,7 +72,6 @@ A simple version EXWM-X dynamic menu." t)
 ;;; Generated autoloads from exwmx-xfce.el
 
 (register-definition-prefixes "exwmx-xfce" '("exwmx-xfce-"))
-
 
 ;;; End of scraped data
 
