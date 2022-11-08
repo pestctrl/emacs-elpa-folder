@@ -184,7 +184,7 @@ which see (but only the files are used).
 Call `org-ql-find' on `org-agenda-files'." t)
 (autoload 'org-ql-find-in-org-directory "org-ql-find" "\
 Call `org-ql-find' on files in `org-directory'." t)
-(register-definition-prefixes "org-ql-find" '("org-ql-find-"))
+(register-definition-prefixes "org-ql-find" '("org-ql-find-goto-hook"))
 
 
 ;;; Generated autoloads from org-ql-search.el
