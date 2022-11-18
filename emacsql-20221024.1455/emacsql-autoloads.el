@@ -5,8 +5,7 @@
 
 ;;; Code:
 
-(add-to-list 'load-path (directory-file-name
-                         (or (file-name-directory #$) (car load-path))))
+(add-to-list 'load-path (or (and load-file-name (file-name-directory load-file-name)) (car load-path)))
 
 
 
@@ -23,6 +22,7 @@ A prefix argument causes the SQL to be printed into the current buffer.
 ;;; Generated autoloads from emacsql-compiler.el
 
 (register-definition-prefixes "emacsql-compiler" '("emacsql-"))
+
 
 ;;; End of scraped data
 
