@@ -26,6 +26,11 @@ Enable/Disable EXWM.
 (register-definition-prefixes "exwm" '("exwm-"))
 
 
+;;; Generated autoloads from exwm-background.el
+
+(register-definition-prefixes "exwm-background" '("exwm-background-"))
+
+
 ;;; Generated autoloads from exwm-cm.el
 
 (register-definition-prefixes "exwm-cm" '("exwm-cm-"))
