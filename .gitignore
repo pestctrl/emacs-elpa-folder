@@ -8,5 +8,7 @@ emacsql-sqlite
 *~
 *.timestamp
 
-vterm-*/build
+vterm*
+pdf-tools*
+tree-sitter-langs*
 *.so
