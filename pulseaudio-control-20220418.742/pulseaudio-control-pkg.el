@@ -1,2 +1,0 @@
-;;; Generated package description from pulseaudio-control.el  -*- no-byte-compile: t -*-
-(define-package "pulseaudio-control" "20220418.742" "Use `pactl' to manage PulseAudio volumes." 'nil :commit "22f54ae7282b37eaec0231a21e60213a5dbc7172" :authors '(("Alexis" . "flexibeast@gmail.com") ("Ellington Santos" . "ellingtonsantos@gmail.com") ("Sergey Trofimov" . "sarg@sarg.org.ru")) :maintainer '("Alexis" . "flexibeast@gmail.com") :keywords '("multimedia" "hardware" "sound" "pulseaudio") :url "https://github.com/flexibeast/pulseaudio-control")
