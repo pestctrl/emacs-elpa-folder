@@ -1,2 +1,0 @@
-;;; Generated package description from ol-notmuch.el  -*- no-byte-compile: t -*-
-(define-package "ol-notmuch" "20230212.2013" "Links to notmuch messages" '((emacs "25.1") (compat "29.1.3.4") (notmuch "0.32") (org "9.4.5")) :commit "ee3646627e47312a0c6ab0a5f6eba3baf8b20cb6" :authors '(("Matthieu Lemerre" . "racin@free.fr")) :maintainer '("Jonas Bernoulli" . "jonas@bernoul.li") :keywords '("hypermedia" "mail") :url "https://git.sr.ht/~tarsius/ol-notmuch")
