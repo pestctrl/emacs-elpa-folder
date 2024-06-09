@@ -1,2 +1,0 @@
-;;; Generated package description from org-caldav.el  -*- no-byte-compile: t -*-
-(define-package "org-caldav" "20230421.1620" "Sync org files with external calendar through CalDAV" '((emacs "26.3") (org "9.1")) :commit "1efb8affe65e70cb2a5437014df3bc8a29922e9f" :authors '(("David Engster" . "deng@randomsample.de")) :maintainers '(("Jack Kamm" . "jackkamm@tatersworld.org")) :maintainer '("Jack Kamm" . "jackkamm@tatersworld.org") :keywords '("calendar" "caldav") :url "https://github.com/dengste/org-caldav/")
