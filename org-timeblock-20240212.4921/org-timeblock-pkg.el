@@ -1,0 +1,2 @@
+;;; Generated package description from org-timeblock.el  -*- no-byte-compile: t -*-
+(define-package "org-timeblock" "20240212.4921" "Interactive SVG calendar for orgmode tasks" '((emacs "28.1") (compat "29.1.4.1") (org "9.0") (svg "1.1")) :authors '(("Ilya Chernyshov" . "ichernyshovvv@gmail.com")) :maintainer '("Ilya Chernyshov" . "ichernyshovvv@gmail.com") :keywords '("org" "calendar" "timeblocking" "agenda") :url "https://github.com/ichernyshovvv/org-timeblock")
