@@ -14,19 +14,21 @@
 (autoload 'corfu-mode "corfu" "\
 COmpletion in Region FUnction.
 
-This is a minor mode.  If called interactively, toggle the `Corfu
-mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
+This is a minor mode.  If called interactively, toggle the `Corfu mode'
+mode.  If the prefix argument is positive, enable the mode, and if it is
+zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `corfu-mode'.
+evaluate the variable `corfu-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+\\{corfu-mode-map}
 
 (fn &optional ARG)" t)
 (put 'global-corfu-mode 'globalized-minor-mode t)
@@ -40,8 +42,8 @@ or call the function `global-corfu-mode'.")
 (custom-autoload 'global-corfu-mode "corfu" nil)
 (autoload 'global-corfu-mode "corfu" "\
 Toggle Corfu mode in all buffers.
-With prefix ARG, enable Global Corfu mode if ARG is positive;
-otherwise, disable it.
+With prefix ARG, enable Global Corfu mode if ARG is positive; otherwise,
+disable it.
 
 If called from Lisp, toggle the mode if ARG is `toggle'.
 Enable the mode if ARG is nil, omitted, or is a positive number.
@@ -52,7 +54,7 @@ Corfu mode is enabled in all buffers where `corfu--on' would do it.
 See `corfu-mode' for more information on Corfu mode.
 
 (fn &optional ARG)" t)
-(register-definition-prefixes "corfu" '("corfu-" "global-corfu-modes"))
+(register-definition-prefixes "corfu" '("corfu-" "global-corfu-m"))
 
 
 ;;; Generated autoloads from corfu-echo.el
@@ -66,18 +68,18 @@ for a description of this minor mode.")
 Show candidate documentation in echo area.
 
 This is a global minor mode.  If called interactively, toggle the
-`Corfu-Echo mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
+`Corfu-Echo mode' mode.  If the prefix argument is positive, enable the
+mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
 evaluate `(default-value \\='corfu-echo-mode)'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "corfu-echo" '("corfu-echo-"))
@@ -97,18 +99,18 @@ or call the function `corfu-history-mode'.")
 Update Corfu history and sort completions by history.
 
 This is a global minor mode.  If called interactively, toggle the
-`Corfu-History mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
+`Corfu-History mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
 evaluate `(default-value \\='corfu-history-mode)'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "corfu-history" '("corfu-history"))
@@ -125,18 +127,18 @@ for a description of this minor mode.")
 Prefix candidates with indices.
 
 This is a global minor mode.  If called interactively, toggle the
-`Corfu-Indexed mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
+`Corfu-Indexed mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
 evaluate `(default-value \\='corfu-indexed-mode)'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "corfu-indexed" '("corfu-indexed-"))
@@ -168,18 +170,18 @@ for a description of this minor mode.")
 Corfu info popup minor mode.
 
 This is a global minor mode.  If called interactively, toggle the
-`Corfu-Popupinfo mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
+`Corfu-Popupinfo mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
 evaluate `(default-value \\='corfu-popupinfo-mode)'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "corfu-popupinfo" '("corfu-popupinfo-"))

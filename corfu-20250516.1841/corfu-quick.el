@@ -1,13 +1,12 @@
 ;;; corfu-quick.el --- Quick keys for Corfu -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2024 Free Software Foundation, Inc.
+;; Copyright (C) 2022-2025 Free Software Foundation, Inc.
 
 ;; Author: Luis Henriquez-Perez <luis@luishp.xyz>, Daniel Mendler <mail@daniel-mendler.de>
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2022
-;; Version: 1.4
-;; Package-Requires: ((emacs "27.1") (compat "29.1.4.4") (corfu "1.4"))
-;; Homepage: https://github.com/minad/corfu
+;; Package-Requires: ((emacs "28.1") (compat "30") (corfu "2.1"))
+;; URL: https://github.com/minad/corfu
 
 ;; This file is part of GNU Emacs.
 
@@ -80,10 +79,10 @@ TWO is non-nil if two keys should be displayed."
           (cond
            ((eq first two)
             (list
-             (concat " " (propertize (char-to-string second) 'face 'corfu-quick1))
+             (propertize (char-to-string second) 'face 'corfu-quick1)
              (cons second (+ corfu--scroll idx))))
            (two
-            (list "  "))
+            (list ""))
            (t
             (list
              (concat (propertize (char-to-string first) 'face 'corfu-quick1)
@@ -91,31 +90,23 @@ TWO is non-nil if two keys should be displayed."
              (cons first (list first))))))
       (let ((first (elt corfu-quick1 (mod idx fst))))
         (if two
-            (list "  ")
+            (list "")
           (list
-           (concat (propertize (char-to-string first) 'face 'corfu-quick1) " ")
+           (propertize (char-to-string first) 'face 'corfu-quick1)
            (cons first (+ corfu--scroll idx))))))))
 
 (defun corfu-quick--read (&optional first)
   "Read quick key given FIRST pressed key."
   (cl-letf* ((list nil)
-             (space1 (propertize " " 'display
-                                 `(space :width
-                                         (+ 0.5 (,(alist-get
-                                                   'child-frame-border-width
-                                                   corfu--frame-parameters))))))
-             (space2 #(" " 0 1 (display (space :width 0.5))))
-             (orig (symbol-function #'corfu--affixate))
-             ((symbol-function #'corfu--affixate)
+             (orig (symbol-function #'corfu--format-candidates))
+             ((symbol-function #'corfu--format-candidates)
               (lambda (cands)
-                (setq cands (cdr (funcall orig cands)))
-                (cl-loop for cand in cands for index from 0 do
+                (setq cands (funcall orig cands))
+                (cl-loop for cand in-ref (nth 2 cands) for index from 0 do
                          (pcase-let ((`(,keys . ,events) (corfu-quick--keys first index)))
-                           (setq list (nconc events list))
-                           (setf (cadr cand) (concat space1 (propertize " " 'display keys) space2))))
-                (cons t cands)))
-             ;; Increase minimum width to avoid odd jumping
-             (corfu-min-width (+ 3 corfu-min-width)))
+                           (setf list (nconc events list)
+                                 cand (concat keys (substring cand (min (length cand) (length keys)))))))
+                cands)))
     (corfu--candidates-popup
      (posn-at-point (+ (car completion-in-region--data) (length corfu--base))))
     (alist-get (read-key) list)))
@@ -145,10 +136,6 @@ TWO is non-nil if two keys should be displayed."
   (interactive)
   (when (corfu-quick-jump)
     (corfu-complete)))
-
-;; Emacs 28: Do not show Corfu commands in M-X
-(dolist (sym '(corfu-quick-jump corfu-quick-insert corfu-quick-complete))
-  (put sym 'completion-predicate #'ignore))
 
 (provide 'corfu-quick)
 ;;; corfu-quick.el ends here
