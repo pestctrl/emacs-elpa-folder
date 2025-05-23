@@ -74,6 +74,10 @@ Functions / Macros
 Changelog
 
 * 0.9-pre: 09-pre.
+* 0.8.10: 0810.
+* 0.8.9: 089.
+* 0.8.8: 088.
+* 0.8.7: 087.
 * 0.8.6: 086.
 * 0.8.5: 085.
 * 0.8.4: 084.
@@ -111,6 +115,10 @@ Changelog
 * 0.2.1: 021.
 * 0.2: 02.
 * 0.1: 01.
+
+0.9-pre
+
+* helm-org-ql: helm-org-ql (1).
 
 Development
 
@@ -1041,6 +1049,10 @@ releases.
 * Menu:
 
 * 0.9-pre: 09-pre.
+* 0.8.10: 0810.
+* 0.8.9: 089.
+* 0.8.8: 088.
+* 0.8.7: 087.
 * 0.8.6: 086.
 * 0.8.5: 085.
 * 0.8.4: 084.
@@ -1080,17 +1092,136 @@ releases.
 * 0.1: 01.
 
 
-File: README.info,  Node: 09-pre,  Next: 086,  Up: Changelog
+File: README.info,  Node: 09-pre,  Next: 0810,  Up: Changelog
 
 5.1 0.9-pre
 ===========
 
-Nothing new yet.
+*Additions*
+   • Face ‘org-ql-view-query’, applied to view queries in header line.
+   • Face ‘org-ql-view-title’, applied to view titles in header line.
+   • Option ‘org-ql-view-relative-deadline-prefix’.
+
+   *Changes*
+   • Command ‘org-ql-find’ respects narrowing of the current buffer by
+     default, allowing searching within the narrowed region.  (Using one
+     ‘C-u’ argument widens the current buffer, and using two ‘C-u’
+     arguments prompts for the buffers to search.)
+   • Function ‘org-ql-completing-read’ accepts a new ‘NARROWP’ argument,
+     which is passed to ‘org-ql-select’.
+
+   *Fixes*
+   • Customization group for face ‘org-ql-view-due-date’.
+   • Apply Org syntax font-locking to items in ‘org-ql-view’ buffers.
+
+* Menu:
+
+* helm-org-ql: helm-org-ql (1).
 
 
-File: README.info,  Node: 086,  Next: 085,  Prev: 09-pre,  Up: Changelog
+File: README.info,  Node: helm-org-ql (1),  Up: 09-pre
 
-5.2 0.8.6
+5.1.1 helm-org-ql
+-----------------
+
+Tagged v0.6.2, fixing a compilation warning.
+
+
+File: README.info,  Node: 0810,  Next: 089,  Prev: 09-pre,  Up: Changelog
+
+5.2 0.8.10
+==========
+
+*Fixes*
+   • Command ‘org-ql-refile’ uses the base buffer when refiling to an
+     indirect buffer.  (#466
+     (https://github.com/alphapapa/org-ql/issues/466).)
+   • Predicate ‘link’ could signal an error when searching text that is
+     mistakenly recognized as an Org link (e.g.  Bash double-bracket
+     constructs in a source block).  (Thanks to John Wiegley
+     (https://github.com/jwiegley) for reporting.)
+
+
+File: README.info,  Node: 089,  Next: 088,  Prev: 0810,  Up: Changelog
+
+5.3 0.8.9
+=========
+
+*Fixes*
+   • Predicate ‘property’ when called with argument form ‘(property
+     "PROPERTY-NAME" :inherit t)’.  (#460
+     (https://github.com/alphapapa/org-ql/issues/460).  Thanks to
+     Stewmath (https://github.com/Stewmath) for reporting.)
+   • Predicate ‘level’’s preamble optimizer allows expressions in place
+     of the numeric argument.  (See #460
+     (https://github.com/alphapapa/org-ql/issues/460).  Thanks to
+     Stewmath (https://github.com/Stewmath) for reporting.)
+   • Reading of view settings from Org links in upcoming Emacs version.
+     (#461 (https://github.com/alphapapa/org-ql/issues/461).  Thanks to
+     Ola Nilsson (https://github.com/snogge) for help debugging, and for
+     maintaining Buttercup
+     (https://github.com/jorgenschaefer/emacs-buttercup).)
+
+   *Compatibility*
+   • Fix compilation error on Emacs 30.  (#433
+     (https://github.com/alphapapa/org-ql/issues/433).  Thanks to Akira
+     Komamura (https://github.com/akirak) and Stefan Monnier
+     (https://github.com/monnier).)
+
+
+File: README.info,  Node: 088,  Next: 087,  Prev: 089,  Up: Changelog
+
+5.4 0.8.8
+=========
+
+*Fixes*
+   • Remove text properties from to-do keywords before displaying them
+     in an ‘org-ql-view’ buffer.  (Such text properties could cause them
+     to, e.g.  display with extra leading spaces, depending on which
+     other modes might be enabled in the source Org buffer.)
+   • Binding of ‘completion-styles-alist’ in ‘org-ql-completing-read’.
+     (This fixes compatibility with Helm’s ‘helm’ completion style, as
+     well as default Emacs completion in recursive minibuffers.  #337
+     (https://github.com/alphapapa/org-ql/issues/337).  Thanks to
+     Nicholas Vollmer (https://github.com/progfolio), viz
+     (https://github.com/9viz), and Karthik Chikmagalur
+     (https://github.com/karthink) for reporting and suggesting fixes.)
+   • Use of the context snippet function for ‘org-ql-completing-read’.
+     (#419 (https://github.com/alphapapa/org-ql/issues/419).  Thanks to
+     tpeacock19 (https://github.com/tpeacock19) for reporting.)
+
+
+File: README.info,  Node: 087,  Next: 086,  Prev: 088,  Up: Changelog
+
+5.5 0.8.7
+=========
+
+*Fixes*
+   • Timestamps with internal time ranges (e.g.  ‘<2024-06-26
+     10:00-11:00>’) are matched for simple queries.  (This support is
+     not yet comprehensive, e.g.  a query that depends on the specific
+     inner time range may not behave as expected.  Previously such
+     timestamps were not matched at all.  See #237
+     (https://github.com/alphapapa/org-ql/pull/237) and #371
+     (https://github.com/alphapapa/org-ql/issues/371).  Thanks to Ihor
+     Radchenko (https://github.com/yantar92).)
+   • Timestamps with day-of-the-week abbreviations are matched more
+     flexibly (allowing, e.g.  a period in French locales).  (See #429
+     (https://github.com/alphapapa/org-ql/discussions/429), #432
+     (https://github.com/alphapapa/org-ql/issues/432).  Thanks to
+     Florian D.  (https://github.com/neurolit) for reporting.)
+   • Command ‘org-ql-search’ did not narrow properly when called
+     interactively.
+
+   *Compatibility*
+   • Dynamic blocks work with Org 9.7.  (#431
+     (https://github.com/alphapapa/org-ql/issues/431).  Thanks to Jez
+     Cope (https://github.com/jezcope) for reporting.)
+
+
+File: README.info,  Node: 086,  Next: 085,  Prev: 087,  Up: Changelog
+
+5.6 0.8.6
 =========
 
 *Fixes*
@@ -1100,7 +1231,7 @@ File: README.info,  Node: 086,  Next: 085,  Prev: 09-pre,  Up: Changelog
 
 File: README.info,  Node: 085,  Next: 084,  Prev: 086,  Up: Changelog
 
-5.3 0.8.5
+5.7 0.8.5
 =========
 
 *Fixes*
@@ -1117,7 +1248,7 @@ File: README.info,  Node: 085,  Next: 084,  Prev: 086,  Up: Changelog
 
 File: README.info,  Node: 084,  Next: 083,  Prev: 085,  Up: Changelog
 
-5.4 0.8.4
+5.8 0.8.4
 =========
 
 *Fixes*
@@ -1131,7 +1262,7 @@ File: README.info,  Node: 084,  Next: 083,  Prev: 085,  Up: Changelog
 
 File: README.info,  Node: 083,  Next: 082,  Prev: 084,  Up: Changelog
 
-5.5 0.8.3
+5.9 0.8.3
 =========
 
 *Fixes*
@@ -1144,8 +1275,8 @@ File: README.info,  Node: 083,  Next: 082,  Prev: 084,  Up: Changelog
 
 File: README.info,  Node: 082,  Next: 081,  Prev: 083,  Up: Changelog
 
-5.6 0.8.2
-=========
+5.10 0.8.2
+==========
 
 *Fixes*
 
@@ -1158,8 +1289,8 @@ File: README.info,  Node: 082,  Next: 081,  Prev: 083,  Up: Changelog
 
 File: README.info,  Node: 081,  Next: 08,  Prev: 082,  Up: Changelog
 
-5.7 0.8.1
-=========
+5.11 0.8.1
+==========
 
 *Fixes*
 
@@ -1173,8 +1304,8 @@ File: README.info,  Node: 081,  Next: 08,  Prev: 082,  Up: Changelog
 
 File: README.info,  Node: 08,  Next: 074,  Prev: 081,  Up: Changelog
 
-5.8 0.8
-=======
+5.12 0.8
+========
 
 *Additions*
 
@@ -1229,8 +1360,8 @@ File: README.info,  Node: 08,  Next: 074,  Prev: 081,  Up: Changelog
 
 File: README.info,  Node: 074,  Next: 073,  Prev: 08,  Up: Changelog
 
-5.9 0.7.4
-=========
+5.13 0.7.4
+==========
 
 *Fixes*
    • Ignore empty quoted strings in plain-string queries (#383
@@ -1239,7 +1370,7 @@ File: README.info,  Node: 074,  Next: 073,  Prev: 08,  Up: Changelog
 
 File: README.info,  Node: 073,  Next: 072,  Prev: 074,  Up: Changelog
 
-5.10 0.7.3
+5.14 0.7.3
 ==========
 
 *Fixes*
@@ -1257,7 +1388,7 @@ File: README.info,  Node: 073,  Next: 072,  Prev: 074,  Up: Changelog
 
 File: README.info,  Node: 072,  Next: 071,  Prev: 073,  Up: Changelog
 
-5.11 0.7.2
+5.15 0.7.2
 ==========
 
 *Fixes*
@@ -1278,7 +1409,7 @@ File: README.info,  Node: 072,  Next: 071,  Prev: 073,  Up: Changelog
 
 File: README.info,  Node: 071,  Next: 07,  Prev: 072,  Up: Changelog
 
-5.12 0.7.1
+5.16 0.7.1
 ==========
 
 *Fixes*
@@ -1297,7 +1428,7 @@ File: README.info,  Node: 071,  Next: 07,  Prev: 072,  Up: Changelog
 
 File: README.info,  Node: 07,  Next: 063,  Prev: 071,  Up: Changelog
 
-5.13 0.7
+5.17 0.7
 ========
 
 *Added*
@@ -1356,7 +1487,7 @@ File: README.info,  Node: 07,  Next: 063,  Prev: 071,  Up: Changelog
 
 File: README.info,  Node: 063,  Next: 062,  Prev: 07,  Up: Changelog
 
-5.14 0.6.3
+5.18 0.6.3
 ==========
 
 *Fixed*
@@ -1372,7 +1503,7 @@ File: README.info,  Node: 063,  Next: 062,  Prev: 07,  Up: Changelog
 
 File: README.info,  Node: 062,  Next: 061,  Prev: 063,  Up: Changelog
 
-5.15 0.6.2
+5.19 0.6.2
 ==========
 
 *Fixed*
@@ -1383,7 +1514,7 @@ File: README.info,  Node: 062,  Next: 061,  Prev: 063,  Up: Changelog
 
 File: README.info,  Node: 061,  Next: 06,  Prev: 062,  Up: Changelog
 
-5.16 0.6.1
+5.20 0.6.1
 ==========
 
 *Fixed*
@@ -1401,7 +1532,7 @@ File: README.info,  Node: 061,  Next: 06,  Prev: 062,  Up: Changelog
 
 File: README.info,  Node: 06,  Next: 052,  Prev: 061,  Up: Changelog
 
-5.17 0.6
+5.21 0.6
 ========
 
 *Added*
@@ -1468,7 +1599,7 @@ File: README.info,  Node: 06,  Next: 052,  Prev: 061,  Up: Changelog
 
 File: README.info,  Node: 052,  Next: 051,  Prev: 06,  Up: Changelog
 
-5.18 0.5.2
+5.22 0.5.2
 ==========
 
 *Fixed*
@@ -1479,7 +1610,7 @@ File: README.info,  Node: 052,  Next: 051,  Prev: 06,  Up: Changelog
 
 File: README.info,  Node: 051,  Next: 05,  Prev: 052,  Up: Changelog
 
-5.19 0.5.1
+5.23 0.5.1
 ==========
 
 *Fixed*
@@ -1492,7 +1623,7 @@ File: README.info,  Node: 051,  Next: 05,  Prev: 052,  Up: Changelog
 
 File: README.info,  Node: 05,  Next: 049,  Prev: 051,  Up: Changelog
 
-5.20 0.5
+5.24 0.5
 ========
 
 *Added*
@@ -1533,7 +1664,7 @@ File: README.info,  Node: 05,  Next: 049,  Prev: 051,  Up: Changelog
 
 File: README.info,  Node: 049,  Next: 048,  Prev: 05,  Up: Changelog
 
-5.21 0.4.9
+5.25 0.4.9
 ==========
 
 *Fixed*
@@ -1544,7 +1675,7 @@ File: README.info,  Node: 049,  Next: 048,  Prev: 05,  Up: Changelog
 
 File: README.info,  Node: 048,  Next: 047,  Prev: 049,  Up: Changelog
 
-5.22 0.4.8
+5.26 0.4.8
 ==========
 
 *Fixed*
@@ -1556,7 +1687,7 @@ File: README.info,  Node: 048,  Next: 047,  Prev: 049,  Up: Changelog
 
 File: README.info,  Node: 047,  Next: 046,  Prev: 048,  Up: Changelog
 
-5.23 0.4.7
+5.27 0.4.7
 ==========
 
 *Fixed*
@@ -1569,7 +1700,7 @@ File: README.info,  Node: 047,  Next: 046,  Prev: 048,  Up: Changelog
 
 File: README.info,  Node: 046,  Next: 045,  Prev: 047,  Up: Changelog
 
-5.24 0.4.6
+5.28 0.4.6
 ==========
 
 *Fixed*
@@ -1582,7 +1713,7 @@ File: README.info,  Node: 046,  Next: 045,  Prev: 047,  Up: Changelog
 
 File: README.info,  Node: 045,  Next: 044,  Prev: 046,  Up: Changelog
 
-5.25 0.4.5
+5.29 0.4.5
 ==========
 
 *Fixed*
@@ -1594,7 +1725,7 @@ File: README.info,  Node: 045,  Next: 044,  Prev: 046,  Up: Changelog
 
 File: README.info,  Node: 044,  Next: 043,  Prev: 045,  Up: Changelog
 
-5.26 0.4.4
+5.30 0.4.4
 ==========
 
 *Fixed*
@@ -1606,7 +1737,7 @@ File: README.info,  Node: 044,  Next: 043,  Prev: 045,  Up: Changelog
 
 File: README.info,  Node: 043,  Next: 042,  Prev: 044,  Up: Changelog
 
-5.27 0.4.3
+5.31 0.4.3
 ==========
 
 *Fixed*
@@ -1616,7 +1747,7 @@ File: README.info,  Node: 043,  Next: 042,  Prev: 044,  Up: Changelog
 
 File: README.info,  Node: 042,  Next: 041,  Prev: 043,  Up: Changelog
 
-5.28 0.4.2
+5.32 0.4.2
 ==========
 
 *Fixed*
@@ -1625,7 +1756,7 @@ File: README.info,  Node: 042,  Next: 041,  Prev: 043,  Up: Changelog
 
 File: README.info,  Node: 041,  Next: 04,  Prev: 042,  Up: Changelog
 
-5.29 0.4.1
+5.33 0.4.1
 ==========
 
 *Fixed*
@@ -1635,7 +1766,7 @@ File: README.info,  Node: 041,  Next: 04,  Prev: 042,  Up: Changelog
 
 File: README.info,  Node: 04,  Next: 032,  Prev: 041,  Up: Changelog
 
-5.30 0.4
+5.34 0.4
 ========
 
 _Note:_ The next release, 0.5, may include changes which will require
@@ -1716,7 +1847,7 @@ automatically, as they will be pushed to the ‘master’ branch when ready.
 
 File: README.info,  Node: 032,  Next: 031,  Prev: 04,  Up: Changelog
 
-5.31 0.3.2
+5.35 0.3.2
 ==========
 
 *Fixed*
@@ -1729,7 +1860,7 @@ File: README.info,  Node: 032,  Next: 031,  Prev: 04,  Up: Changelog
 
 File: README.info,  Node: 031,  Next: 03,  Prev: 032,  Up: Changelog
 
-5.32 0.3.1
+5.36 0.3.1
 ==========
 
 *Fixed*
@@ -1739,7 +1870,7 @@ File: README.info,  Node: 031,  Next: 03,  Prev: 032,  Up: Changelog
 
 File: README.info,  Node: 03,  Next: 023,  Prev: 031,  Up: Changelog
 
-5.33 0.3
+5.37 0.3
 ========
 
 *Added*
@@ -1807,7 +1938,7 @@ File: README.info,  Node: 03,  Next: 023,  Prev: 031,  Up: Changelog
 
 File: README.info,  Node: 023,  Next: 022,  Prev: 03,  Up: Changelog
 
-5.34 0.2.3
+5.38 0.2.3
 ==========
 
 *Fixed*
@@ -1817,7 +1948,7 @@ File: README.info,  Node: 023,  Next: 022,  Prev: 03,  Up: Changelog
 
 File: README.info,  Node: 022,  Next: 021,  Prev: 023,  Up: Changelog
 
-5.35 0.2.2
+5.39 0.2.2
 ==========
 
 *Fixed*
@@ -1828,7 +1959,7 @@ File: README.info,  Node: 022,  Next: 021,  Prev: 023,  Up: Changelog
 
 File: README.info,  Node: 021,  Next: 02,  Prev: 022,  Up: Changelog
 
-5.36 0.2.1
+5.40 0.2.1
 ==========
 
 *Fixed*
@@ -1838,7 +1969,7 @@ File: README.info,  Node: 021,  Next: 02,  Prev: 022,  Up: Changelog
 
 File: README.info,  Node: 02,  Next: 01,  Prev: 021,  Up: Changelog
 
-5.37 0.2
+5.41 0.2
 ========
 
 *Added*
@@ -1921,7 +2052,7 @@ File: README.info,  Node: 02,  Next: 01,  Prev: 021,  Up: Changelog
 
 File: README.info,  Node: 01,  Prev: 02,  Up: Changelog
 
-5.38 0.1
+5.42 0.1
 ========
 
 First tagged release.
@@ -2006,85 +2137,90 @@ GPLv3
 
 Tag Table:
 Node: Top225
-Node: Contents2009
-Node: Screenshots2136
-Node: Installation2254
-Node: Quelpa2768
-Node: Helm support3296
-Node: Usage3699
-Node: Commands4097
-Node: org-ql-find4562
-Node: org-ql-open-link5470
-Node: org-ql-refile6325
-Node: org-ql-search6653
-Node: helm-org-ql8584
-Node: org-ql-view8962
-Node: org-ql-view-sidebar9492
-Node: org-ql-view-recent-items9872
-Node: org-ql-sparse-tree10368
-Node: Queries11168
-Node: Non-sexp query syntax12285
-Node: General predicates14044
-Node: Ancestor/descendant predicates20969
-Node: Date/time predicates22097
-Node: Functions / Macros25221
-Node: Agenda-like views25519
-Ref: Function org-ql-block25681
-Node: Listing / acting-on results26942
-Ref: Caching27150
-Ref: Function org-ql-select28063
-Ref: Function org-ql-query30489
-Ref: Macro org-ql (deprecated)32263
-Node: Custom predicates32578
-Ref: Macro org-ql-defpred32802
-Node: Dynamic block36243
-Node: Links38967
-Node: Tips39654
-Node: Changelog39978
-Node: 09-pre40903
-Node: 08641010
-Node: 08541247
-Node: 08441903
-Node: 08342355
-Node: 08242696
-Node: 08143089
-Node: 0843510
-Node: 07446234
-Node: 07346457
-Node: 07247191
-Node: 07148112
-Node: 0748923
-Node: 06351789
-Node: 06252322
-Node: 06152629
-Node: 0653199
-Node: 05256255
-Node: 05156557
-Node: 0556982
-Node: 04958513
-Node: 04858795
-Node: 04759144
-Node: 04659553
-Node: 04559961
-Node: 04460322
-Node: 04360681
-Node: 04260884
-Node: 04161045
-Node: 0461292
-Node: 03265393
-Node: 03165796
-Node: 0365993
-Node: 02369293
-Node: 02269527
-Node: 02169807
-Node: 0270012
-Node: 0174090
-Node: Development74191
-Node: Copyright assignment74424
-Node: Notes75014
-Node: Comparison with Org Agenda searches75178
-Node: org-sidebar76067
-Node: License76346
+Node: Contents2109
+Node: Screenshots2236
+Node: Installation2354
+Node: Quelpa2868
+Node: Helm support3396
+Node: Usage3799
+Node: Commands4197
+Node: org-ql-find4662
+Node: org-ql-open-link5570
+Node: org-ql-refile6425
+Node: org-ql-search6753
+Node: helm-org-ql8684
+Node: org-ql-view9062
+Node: org-ql-view-sidebar9592
+Node: org-ql-view-recent-items9972
+Node: org-ql-sparse-tree10468
+Node: Queries11268
+Node: Non-sexp query syntax12385
+Node: General predicates14144
+Node: Ancestor/descendant predicates21069
+Node: Date/time predicates22197
+Node: Functions / Macros25321
+Node: Agenda-like views25619
+Ref: Function org-ql-block25781
+Node: Listing / acting-on results27042
+Ref: Caching27250
+Ref: Function org-ql-select28163
+Ref: Function org-ql-query30589
+Ref: Macro org-ql (deprecated)32363
+Node: Custom predicates32678
+Ref: Macro org-ql-defpred32902
+Node: Dynamic block36343
+Node: Links39067
+Node: Tips39754
+Node: Changelog40078
+Node: 09-pre41061
+Node: helm-org-ql (1)41987
+Node: 081042128
+Node: 08942657
+Node: 08843797
+Node: 08744873
+Node: 08646101
+Node: 08546335
+Node: 08446991
+Node: 08347443
+Node: 08247784
+Node: 08148179
+Node: 0848602
+Node: 07451328
+Node: 07351553
+Node: 07252287
+Node: 07153208
+Node: 0754019
+Node: 06356885
+Node: 06257418
+Node: 06157725
+Node: 0658295
+Node: 05261351
+Node: 05161653
+Node: 0562078
+Node: 04963609
+Node: 04863891
+Node: 04764240
+Node: 04664649
+Node: 04565057
+Node: 04465418
+Node: 04365777
+Node: 04265980
+Node: 04166141
+Node: 0466388
+Node: 03270489
+Node: 03170892
+Node: 0371089
+Node: 02374389
+Node: 02274623
+Node: 02174903
+Node: 0275108
+Node: 0179186
+Node: Development79287
+Node: Copyright assignment79520
+Node: Notes80110
+Node: Comparison with Org Agenda searches80274
+Node: org-sidebar81163
+Node: License81442
 
 End Tag Table
 

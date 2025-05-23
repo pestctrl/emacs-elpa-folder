@@ -44,6 +44,7 @@
 
 (declare-function org-ql-search "org-ql-search" t)
 (declare-function org-ql-search--org-link-store-props "org-ql-search" t)
+(declare-function org-ql--normalize-query "org-ql" t t)
 
 (require 'dash)
 (require 's)
@@ -56,7 +57,18 @@
 (defface org-ql-view-due-date
   '((t (:slant italic :weight bold)))
   "Face for due dates in `org-ql-view' views."
-  :group 'org-ql)
+  :group 'org-ql-view)
+
+(defface org-ql-view-query nil
+  "View query in header line.
+This face is added to the formatted query after font-lock faces
+are applied to it.  It may be used, e.g. to reduce the height so
+more of it is visible."
+  :group 'org-ql-view)
+
+(defface org-ql-view-title '((t :weight bold))
+  "View title in header line."
+  :group 'org-ql-view)
 
 ;;;; Variables
 
@@ -236,6 +248,12 @@ See info node `(elisp)Cyclic Window Ordering'."
                               (choice (variable-item :tag "Default org-super-agenda groups" org-super-agenda-groups)
                                       (sexp :tag "org-super-agenda grouping expression")
                                       (variable :tag "Variable holding org-super-agenda  grouping expression"))))))))
+
+(defcustom org-ql-view-relative-deadline-prefix "due "
+  ;; TODO(v0.9): Add one for scheduled, too.
+  "Prefix for relative deadlines.
+Relative deadlines are, e.g. \"in 5d\", \"5d ago\"."
+  :type 'string)
 
 ;;;; Commands
 
@@ -458,7 +476,8 @@ subsequent refreshing of the buffer: `org-ql-view-buffers-files',
 If TITLE, prepend it to the header."
   (let* ((title (if title
                     (concat (propertize "View:" 'face 'transient-argument)
-                            title " ")
+                            (propertize title 'face 'org-ql-view-title)
+                            " ")
                   ""))
          (query-formatted (when query
                             (org-ql-view--format-query query)))
@@ -477,6 +496,7 @@ If TITLE, prepend it to the header."
                                                      (org-ql-view--font-lock-string 'emacs-lisp-mode)
                                                      (s-truncate available-width))
                                                 'help-echo buffers-files-formatted))))
+    (add-face-text-property 0 (length query-propertized) 'org-ql-view-query 'append query-propertized)
     (concat title
             (when query (propertize "Query:" 'face 'transient-argument))
             (when query query-propertized)
@@ -507,6 +527,22 @@ with human-readable strings."
       (funcall mode)
       (font-lock-ensure)
       (buffer-string))))
+
+(defun org-ql-view--font-lock-as-org (s)
+  "Return string S font-locked as in `org-mode'."
+  ;; This works like `org-fontify-like-in-org-mode', but uses a single
+  ;; buffer instead of a new one every time.
+  ;; TODO(C): Submit these improvements upstream.
+  (let ((buffer (or (get-buffer " *org-ql-view--font-lock-as-org*")
+                    (with-current-buffer (get-buffer-create " *org-ql-view--font-lock-as-org*")
+                      (buffer-disable-undo)
+                      (org-mode)
+                      (current-buffer)))))
+    (with-current-buffer buffer
+      (insert s)
+      (font-lock-ensure)
+      (prog1 (buffer-string)
+        (erase-buffer)))))
 
 (defun org-ql-view--buffer (&optional name)
   "Return `org-ql-view' buffer, creating it if necessary.
@@ -610,6 +646,7 @@ The optional, second argument is temporarily _IGNORED for
 purposes of compatibility with changes in Org 9.4."
   (require 'url-parse)
   (require 'url-util)
+  (declare-function url-path-and-query "url-parse")
   (when (version<= "9.3" (org-version))
     ;; Org 9.3+ makes a backward-incompatible change to link escaping.
     ;; I don't think it would be a good idea to try to guess whether
@@ -624,7 +661,7 @@ purposes of compatibility with changes in Org 9.4."
                (query (url-unhex-string query))
                (params (when params (url-parse-query-string params)))
                ;; `url-parse-query-string' returns "improper" alists, which makes this awkward.
-               (sort (when-let* ((stored-string (alist-get "sort" params nil nil #'string=))
+               (sort (when-let* ((stored-string (car (alist-get "sort" params nil nil #'string=)))
                                  (read-value (read stored-string)))
                        ;; Ensure the value is either a symbol or list of symbols (which excludes lambdas).
                        (unless (or (symbolp read-value) (cl-every #'symbolp read-value))
@@ -632,17 +669,19 @@ purposes of compatibility with changes in Org 9.4."
                                 read-value))
                        read-value))
                (org-super-agenda-allow-unsafe-groups nil) ; Disallow unsafe group selectors.
-               (groups (--when-let (alist-get "super-groups" params nil nil #'string=)
+               (groups (--when-let (car (alist-get "super-groups" params nil nil #'string=))
                          (read it)))
-               (title (--when-let (alist-get "title" params nil nil #'string=)
+               (title (--when-let (car (alist-get "title" params nil nil #'string=))
                         (read it)))
-               (buffers-files (--if-let (alist-get "buffers-files" params nil nil #'string=)
+               (buffers-files (--if-let (car (alist-get "buffers-files" params nil nil #'string=))
                                   (org-ql-view--expand-buffers-files (read it))
                                 (current-buffer))))
     (unless (or (bufferp buffers-files)
                 (stringp buffers-files)
                 (cl-every #'stringp buffers-files))
       (error "CAUTION: Link not opened because unsafe buffers-files parameter detected: %s" buffers-files))
+    (unless (or (stringp title) (null title))
+      (error "CAUTION: Link not opened because unsafe title parameter detected: %S" title))
     (when (or (listp query)
               (string-match (rx bol (0+ space) "(") query))
       ;; SAFETY: Query is in sexp form: ask for confirmation, because it could contain arbitrary code.
@@ -710,6 +749,8 @@ When opened, the link searches the buffer it's opened from."
 ;; NOTE: I don't really know what I'm doing here.  Even though the
 ;; Transient manual is written very well, not everything is covered in
 ;; it, so I'm having to try to imitate examples from `magit-transient'.
+
+(require 'eieio-core)
 
 (require 'transient)
 
@@ -873,6 +914,11 @@ return an empty string."
            ;; (which would also make it easier to do it independently of faces, etc).
            (title (--> (org-ql-view--add-faces element)
                        (org-element-property :raw-value it)))
+           ;; TODO(B): Needs refactoring.  A function like `org-ql-view--add-faces'
+           ;; should return a list of faces to be added.
+           (title-faces (get-text-property 0 'face title))
+           (title (org-ql-view--font-lock-as-org title))
+           (_ (add-face-text-property 0 (length title) title-faces t title))
            (indent (when org-ql-indent-levels
                      (make-string (let ((m (org-element-property :org-marker element)))
                                     (with-current-buffer (marker-buffer m)
@@ -880,7 +926,8 @@ return an empty string."
                                       (get-parent-indent-level)))
                                   ?.)))
            (todo-keyword (-some--> (org-element-property :todo-keyword element)
-                           (org-ql-view--add-todo-face it)))
+                           (org-ql-view--add-todo-face
+                            (substring-no-properties it))))
            (tag-list (if org-use-tag-inheritance
                          ;; MAYBE: Use our own variable instead of `org-use-tag-inheritance'.
                          (if-let ((marker (or (org-element-property :org-hd-marker element)
@@ -1020,7 +1067,9 @@ property."
              (deadline-day-number (org-time-string-to-absolute
                                    (org-element-timestamp-interpreter deadline-date 'ignore)))
              (difference-days (- today-day-number deadline-day-number))
-             (relative-due-date (org-add-props (org-ql-view--format-relative-date difference-days) nil
+             (relative-due-date (org-add-props
+                                    (concat org-ql-view-relative-deadline-prefix
+                                            (org-ql-view--format-relative-date difference-days)) nil
                                   'help-echo (org-element-property :raw-value deadline-date)))
              ;; FIXME: Unused for now: (todo-keyword (org-element-property :todo-keyword element))
              ;; FIXME: Unused for now: (done-p (member todo-keyword org-done-keywords))

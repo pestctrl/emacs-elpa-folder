@@ -157,10 +157,9 @@ This list should not contain any duplicates."))
 (defvar org-ql-regexp-part-ts-date
   (rx (repeat 4 digit) "-" (repeat 2 digit) "-" (repeat 2 digit)
       ;; Day of week
-      (optional " " (1+ alpha)))
+      (optional " " (1+ (or alpha punct))))
   "Matches the inner, date part of an Org timestamp, both active and inactive.
-Also matches optional day-of-week.  Used to build other timestamp
-regexps.")
+Used to build other timestamp regexps.")
 
 (defvar org-ql-regexp-part-ts-repeaters
   ;; Repeaters (not sure if the colon is necessary, but it's in the org.el one)
@@ -170,7 +169,8 @@ regexps.")
 Includes leading space character.")
 
 (defvar org-ql-regexp-part-ts-time
-  (rx " " (repeat 1 2 digit) ":" (repeat 2 digit))
+  (rx " " (repeat 1 2 digit) ":" (repeat 2 digit)
+      (optional "-" (repeat 1 2 digit) ":" (repeat 2 digit)))
   "Matches the inner, time part of an Org timestamp (i.e. HH:MM).
 Includes leading space character.  Used to build other timestamp
 regexps.")
@@ -1120,7 +1120,10 @@ defined in `org-ql-predicates' by calling `org-ql-defpred'."
                                         ;; Only one preamble is allowed
                                         element)
                                       (pcase element
-                                        (`(or _) element)
+                                        (`(or ,element)
+                                         ;; A predicate with a single name: unwrap the OR.  (Pcase doesn't like
+                                         ;; "one-armed ORs", giving a "Please avoid it" compilation error.)
+                                         element)
 
                                         ,@preamble-patterns
 
@@ -1143,7 +1146,7 @@ defined in `org-ql-predicates' by calling `org-ql-defpred'."
     (byte-compile 'org-ql--query-preamble)))
 
 (cl-defmacro org-ql-defpred (name args docstring &key body preambles normalizers coalesce)
-  "Define an \\+`org-ql' selector predicate \\=`org-ql--predicate-NAME'.
+  "Define an Org QL selector predicate \\=`org-ql--predicate-NAME'.
 NAME may be a symbol or a list of symbols: if a list, the first
 is used as NAME and the rest are aliases.  A function is only
 created for NAME, not for aliases, so a normalizer should be used
@@ -1228,7 +1231,7 @@ Then if NORMALIZERS were:
 
 It would be expanded to:
 
-  ((\\=`(,(or 'heading 'h) . ,args)
+  ((\\=`(,(or \\='heading \\='h) . ,args)
     \\=`(heading ,@args)))"
   ;; FIXME: Update defpred tutorial to include :coalesce.
 
@@ -1536,7 +1539,8 @@ COMPARATOR may be `<', `<=', `>', or `>='."
                ;; is "h:" while the user is typing.
                (list :regexp (rx bol (1+ "*") " ")
                      :case-fold t))
-              (`(,predicate-names ,comparator-or-num ,num)
+              ((and `(,predicate-names ,comparator-or-num ,num)
+                    (guard (numberp num)))
                (let ((repeat (pcase comparator-or-num
                                ('< `(repeat 1 ,(1- num) "*"))
                                ('<= `(repeat 1 ,num "*"))
@@ -1545,7 +1549,8 @@ COMPARATOR may be `<', `<=', `>', or `>='."
                                ((pred integerp) `(repeat ,comparator-or-num ,num "*")))))
                  (list :regexp (rx-to-string `(seq bol ,repeat " ") t)
                        :case-fold t)))
-              (`(,predicate-names ,num)
+              ((and `(,predicate-names ,num)
+                    (guard (numberp num)))
                (list :regexp (rx-to-string `(seq bol (repeat ,num "*") " ") t)
                      :case-fold t)))
   ;; NOTE: It might be necessary to take into account `org-odd-levels'; see docstring for
@@ -1623,11 +1628,15 @@ any link is found."
                          (or (null description)
                              (string-match-p description (match-string org-ql-link-description-group)))))
               (_ (if (and description target)
-                     (and (string-match-p target (match-string 1))
-                          (string-match-p description (match-string org-ql-link-description-group)))
-                   (or (string-match-p description-or-target (match-string 1))
-                       (string-match-p description-or-target
-                                       (match-string org-ql-link-description-group)))))))))
+                     (and (and (match-string 1)
+                               (string-match-p target (match-string 1)))
+                          (and (match-string org-ql-link-description-group)
+                               (string-match-p description (match-string org-ql-link-description-group))))
+                   (or (and (match-string 1)
+                            (string-match-p description-or-target (match-string 1)))
+                       (and (match-string org-ql-link-description-group)
+                            (string-match-p description-or-target
+                                            (match-string org-ql-link-description-group))))))))))
 
 (org-ql-defpred (rifle smart) (&rest strings)
   "Return non-nil if each of strings is found in the entry or its outline path.
@@ -1801,34 +1810,62 @@ interpreted as nil or non-nil)."
                  ;; predicate test for whether an entry has local
                  ;; properties when no arguments are given.
                  (list 'property ""))
-                (`(,predicate-names ,property ,value . ,plist)
+                (`(,predicate-names ,property)
                  ;; Convert keyword property arguments to strings.  Non-sexp
                  ;; queries result in keyword property arguments (because to do
                  ;; otherwise would require ugly special-casing in the parsing).
                  (when (keywordp property)
                    (setf property (substring (symbol-name property) 1)))
-                 (list 'property property value
-                       :inherit (cond ((plist-member plist :inherit) (plist-get plist :inherit))
-                                      ((listp org-use-property-inheritance) ''selective)
-                                      (t org-use-property-inheritance)))))
+                 (list 'property property))
+                (`(,predicate-names ,property . ,rest)
+                 (pcase rest
+                   (`(,value)
+                    ;; Convert keyword property arguments to strings.  Non-sexp
+                    ;; queries result in keyword property arguments (because to do
+                    ;; otherwise would require ugly special-casing in the parsing).
+                    (when (keywordp property)
+                      (setf property (substring (symbol-name property) 1)))
+                    (list 'property property value))
+                   ((and `(,value . ,plist)
+                         (guard (not (keywordp value))))
+                    ;; Convert keyword property arguments to strings.  Non-sexp
+                    ;; queries result in keyword property arguments (because to do
+                    ;; otherwise would require ugly special-casing in the parsing).
+                    (when (keywordp property)
+                      (setf property (substring (symbol-name property) 1)))
+                    (list 'property property value
+                          :inherit (cond ((plist-member plist :inherit) (plist-get plist :inherit))
+                                         ((listp org-use-property-inheritance) ''selective)
+                                         (t org-use-property-inheritance))))
+                   ((and plist (guard (keywordp (car rest))))
+                    ;; Convert keyword property arguments to strings.  Non-sexp
+                    ;; queries result in keyword property arguments (because to do
+                    ;; otherwise would require ugly special-casing in the parsing).
+                    (when (keywordp property)
+                      (setf property (substring (symbol-name property) 1)))
+                    (list 'property property nil
+                          :inherit (cond ((plist-member plist :inherit) (plist-get plist :inherit))
+                                         ((listp org-use-property-inheritance) ''selective)
+                                         (t org-use-property-inheritance)))))))
   ;; MAYBE: Should case folding be disabled for properties?  What about values?
   ;; MAYBE: Support (property) without args.
 
   ;; NOTE: When inheritance is enabled, the preamble can't be used,
   ;; which will make the search slower.
-  :preambles ((`(,predicate-names ,property ,value . ,(map :inherit))
+  :preambles (((and `(,predicate-names ,property ,value)
+                    (guard (atom value)))
                ;; We do NOT return nil, because the predicate still needs to be tested,
                ;; because the regexp could match a string not inside a property drawer.
-               (list :regexp (unless inherit
-                               (rx-to-string `(seq bol (0+ space) ":" ,property ":"
-                                                   (1+ space) ,value (0+ space) eol)))
+               (list :regexp (rx-to-string `(seq bol (0+ space) ":" ,property ":"
+                                                 (1+ space) ,value (0+ space) eol))
                      :query query))
-              (`(,predicate-names ,property . ,(map :inherit))
-               ;; We do NOT return nil, because the predicate still needs to be tested,
+              ((and `(,predicate-names ,property ,value . ,plist)
+                    (guard (keywordp (car plist))))
+               ;; WE do NOT return nil, because the predicate still needs to be tested,
                ;; because the regexp could match a string not inside a property drawer.
                ;; NOTE: The preamble only matches if there appears to be a value.
                ;; A line like ":ID: " without any other text does not match.
-               (list :regexp (unless inherit
+               (list :regexp (unless (plist-get plist :inherit)
                                (rx-to-string `(seq bol (0+ space) ":" ,property ":" (1+ space)
                                                    (minimal-match (1+ not-newline)) eol)))
                      :query query)))
@@ -1840,7 +1877,7 @@ interpreted as nil or non-nil)."
           ;; Check that PROPERTY exists
           (org-ql--value-at
            (point) (lambda ()
-                     (org-entry-get (point) property))))
+                     (org-entry-get (point) property inherit))))
          (_
           ;; Check that PROPERTY has VALUE.
 
