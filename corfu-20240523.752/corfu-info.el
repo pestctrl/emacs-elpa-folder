@@ -1,12 +1,13 @@
 ;;; corfu-info.el --- Show candidate information in separate buffer -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2025 Free Software Foundation, Inc.
+;; Copyright (C) 2022-2024 Free Software Foundation, Inc.
 
 ;; Author: Daniel Mendler <mail@daniel-mendler.de>
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2022
-;; Package-Requires: ((emacs "28.1") (compat "30") (corfu "2.1"))
-;; URL: https://github.com/minad/corfu
+;; Version: 1.4
+;; Package-Requires: ((emacs "27.1") (compat "29.1.4.4") (corfu "1.4"))
+;; Homepage: https://github.com/minad/corfu
 
 ;; This file is part of GNU Emacs.
 
@@ -73,7 +74,8 @@ If called with a prefix ARG, the buffer is persistent."
   (when (< corfu--index 0)
     (user-error "No candidate selected"))
   (let ((cand (nth corfu--index corfu--candidates)))
-    (if-let ((fun (corfu--metadata-get 'company-doc-buffer))
+    (if-let ((extra (nth 4 completion-in-region--data))
+             (fun (plist-get extra :company-doc-buffer))
              (res (funcall fun cand)))
         (set-window-start (corfu-info--display-buffer
                            (get-buffer (or (car-safe res) res))
@@ -90,7 +92,8 @@ If called with a prefix ARG, the buffer is persistent."
   (when (< corfu--index 0)
     (user-error "No candidate selected"))
   (let ((cand (nth corfu--index corfu--candidates)))
-    (if-let ((fun (corfu--metadata-get 'company-location))
+    (if-let ((extra (nth 4 completion-in-region--data))
+             (fun (plist-get extra :company-location))
              ;; BUG: company-location may throw errors if location is not found
              (loc (ignore-errors (funcall fun cand))))
         (with-selected-window
@@ -106,6 +109,10 @@ If called with a prefix ARG, the buffer is persistent."
                 (forward-line (1- pos))))
             (set-window-start nil (point))))
       (user-error "No location available for `%s'" cand))))
+
+;; Emacs 28: Do not show Corfu commands with M-X
+(put #'corfu-info-location 'completion-predicate #'ignore)
+(put #'corfu-info-documentation 'completion-predicate #'ignore)
 
 (provide 'corfu-info)
 ;;; corfu-info.el ends here
