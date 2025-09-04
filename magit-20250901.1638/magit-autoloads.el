@@ -185,16 +185,16 @@ either customize it (see the info node `Easy Customization')
 or call the function `magit-auto-revert-mode'.")
 (custom-autoload 'magit-auto-revert-mode "magit-autorevert" nil)
 (autoload 'magit-auto-revert-mode "magit-autorevert" "\
-Toggle Auto-Revert mode in all buffers.
+Toggle Auto-Revert mode in many buffers.
+Specifically, Auto-Revert mode is enabled in all buffers where
+`magit-turn-on-auto-revert-mode-if-desired' would do it.
+
 With prefix ARG, enable Magit-Auto-Revert mode if ARG is positive;
 otherwise, disable it.
 
 If called from Lisp, toggle the mode if ARG is `toggle'.
 Enable the mode if ARG is nil, omitted, or is a positive number.
 Disable the mode if ARG is a negative number.
-
-Auto-Revert mode is enabled in all buffers where
-`magit-turn-on-auto-revert-mode-if-desired' would do it.
 
 See `auto-revert-mode' for more information on Auto-Revert mode.
 
@@ -2229,16 +2229,16 @@ either customize it (see the info node `Easy Customization')
 or call the function `magit-wip-after-save-mode'.")
 (custom-autoload 'magit-wip-after-save-mode "magit-wip" nil)
 (autoload 'magit-wip-after-save-mode "magit-wip" "\
-Toggle Magit-Wip-After-Save-Local mode in all buffers.
+Toggle Magit-Wip-After-Save-Local mode in many buffers.
+Specifically, Magit-Wip-After-Save-Local mode is enabled in all
+buffers where `magit-wip-after-save-local-mode-turn-on' would do it.
+
 With prefix ARG, enable Magit-Wip-After-Save mode if ARG is positive;
 otherwise, disable it.
 
 If called from Lisp, toggle the mode if ARG is `toggle'.
 Enable the mode if ARG is nil, omitted, or is a positive number.
 Disable the mode if ARG is a negative number.
-
-Magit-Wip-After-Save-Local mode is enabled in all buffers where
-`magit-wip-after-save-local-mode-turn-on' would do it.
 
 See `magit-wip-after-save-local-mode' for more information on
 Magit-Wip-After-Save-Local mode.
